@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Featured } from '../featured/featured';
 import { FandomData } from '../../services/fandom-data';
 import { SiteData } from '../../services/site-data';
@@ -32,7 +33,7 @@ export class Home implements OnInit {
     {key:'media',title:'Media',route:'/media',image:'/images/category-uploaded/media.jpg',video:'https://www.youtube.com/embed/uIW0xWchKJg'},
     {key:'trailers',title:'Trailers',route:'/trailers',image:'/images/category-uploaded/trailer.jpg',video:'https://www.youtube.com/embed/uIW0xWchKJg'}
   ];
-  constructor(private fandomData: FandomData, public siteData: SiteData) {}
+  constructor(private fandomData: FandomData, public siteData: SiteData, private router: Router) {}
   async ngOnInit() {
     this.currentDateTime = new Date().toLocaleString();
     setInterval(() => this.currentDateTime = new Date().toLocaleString(), 1000);
@@ -46,7 +47,7 @@ export class Home implements OnInit {
   openCard(card: HomeCard) { this.selectedCard = card; }
   closeCard() { this.selectedCard = null; this.selectedCategoryCard = null; }
   openCategoryCard(card: CategoryCard) { if (card.video) this.selectedCategoryCard = card; }
-  exploreCategory(card: CategoryCard, event: Event) { event.stopPropagation(); window.location.href = card.route; }
+  exploreCategory(card: CategoryCard, event: Event) { event.stopPropagation(); this.router.navigateByUrl(card.route); }
   bookmark(card: HomeCard) { this.siteData.toggleBookmark({key:`profile-${card.category}-${card.profile.id}`,name:card.profile.name,series:card.profile.series,category:card.category,image:card.profile.image}); }
   addCart(card: HomeCard) { this.siteData.addToCart({key:`profile-cart-${card.category}-${card.profile.id}`,name:`${card.profile.name} Fan Card`,price:'$9.99',category:card.title,image:card.profile.image,description:`Fan card for ${card.profile.name}`}); }
   isBookmarked(card: HomeCard) { return this.siteData.isBookmarked(`profile-${card.category}-${card.profile.id}`); }
